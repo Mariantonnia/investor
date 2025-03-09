@@ -15,7 +15,6 @@ llm = ChatGroq(
 )
 
 # Crear una cadena de procesamiento de lenguaje con LangChain
-chain = LLMChain(llm=llm)
 
 # Configurar la interfaz de Streamlit
 st.title("Aplicación Básica de LangChain con Streamlit")
