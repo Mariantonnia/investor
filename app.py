@@ -1,7 +1,9 @@
 import streamlit as st
 from langchain import LLMChain
 from langchain_groq import ChatGroq
-
+os.environ["GROQ_API_KEY"] = "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"
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_PROJECT"] = "langchain-academy"
 # Configurar el modelo de Groq
 llm = ChatGroq(
     model="deepseek-r1-distill-llama-70b",
