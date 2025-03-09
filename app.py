@@ -25,7 +25,7 @@ user_input = st.text_input("Escribe algo:")
 
 # Procesar la entrada del usuario con LangChain
 if user_input:
-    response = chain.run(user_input)
+    response = llm.run(user_input)
     st.write("Respuesta de LangChain:")
     st.write(response)
 else:
