@@ -1,6 +1,7 @@
 import streamlit as st
 from langchain import LLMChain
 from langchain_groq import ChatGroq
+import os, getpass
 os.environ["GROQ_API_KEY"] = "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"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "langchain-academy"
