@@ -72,8 +72,8 @@ else:
         analisis_total += analisis_reaccion + "\n"
 
     perfil = cadena_perfil.run(analisis=analisis_total)
-    st.write(f"**Perfil del inversor:** {perfil}")
-    print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
+    #st.write(f"**Perfil del inversor:** {perfil}")
+    #print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
 
     # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {}
@@ -82,6 +82,7 @@ else:
     puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil).group(1))
     puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil).group(1))
 
+    print(puntuaciones)
     # Crear gráfico de barras
     categorias = list(puntuaciones.keys())
     valores = list(puntuaciones.values())
