@@ -56,12 +56,11 @@ st.title("Análisis de Sentimiento de Inversores")
 
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
-    titular = cadena_titular.run(noticia=noticia)
+    titular = cadena_titular.run(noticia=noticia).strip() #Eliminamos espacios en blanco
     st.session_state.titulares.append(titular)
     st.write(f"**Titular:** {titular}")
 
-    # Clave única para cada noticia
-    reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=f"reaccion_{st.session_state.contador}")
+    reaccion = st.text_input(f"Hola, ¿cuál es tu opinión sobre {titular}?", key=f"reaccion_{st.session_state.contador}")
 
     if reaccion:
         st.session_state.reacciones.append(reaccion)
