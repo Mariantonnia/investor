@@ -45,7 +45,7 @@ Análisis de reacciones: {analisis}
 Genera un perfil de inversor con enfoque en ESG y aversión al riesgo:
 """
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
-cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
+cadena_perfil = LLMChain(llm=llm, prompt=cadena_perfil)
 
 if "contador" not in st.session_state:
     st.session_state.contador = 0
@@ -60,12 +60,13 @@ if st.session_state.contador < len(noticias):
     st.session_state.titulares.append(titular)
     st.write(f"**Titular:** {titular}")
 
-    reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?")
+    # Clave única para cada noticia
+    reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=f"reaccion_{st.session_state.contador}")
 
     if reaccion:
         st.session_state.reacciones.append(reaccion)
         st.session_state.contador += 1
-        st.rerun()  # Recarga la app para mostrar la siguiente pregunta
+        st.rerun()
 else:
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
