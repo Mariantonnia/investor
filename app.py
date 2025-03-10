@@ -57,7 +57,16 @@ st.title("Análisis de Sentimiento de Inversores")
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
     resultado_titular = cadena_titular.run(noticia=noticia).strip()
-    titular = resultado_titular.split('\n')[-1].strip().replace('"','') #Extraemos la ultima linea del resultado
+    # Extracción del titular usando expresiones regulares
+    match = re.search(r'"([^"]*)"$', resultado_titular) #Busca la ultima frase entre comillas
+    if match:
+        titular = match.group(1).strip()
+    else:
+        lines = resultado_titular.split('\n')
+        for line in reversed(lines):
+            if "<think>" not in line:
+                titular = line.strip()
+                break
     st.session_state.titulares.append(titular)
     st.write(f"**Titular:** {titular}")
 
