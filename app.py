@@ -5,6 +5,7 @@ import os
 from transformers import pipeline
 from langgraph.graph import MessagesState
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain.prompts import PromptTemplate
 
 os.environ["GROQ_API_KEY"] = "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"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
