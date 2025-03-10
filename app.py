@@ -95,8 +95,8 @@ else:
     # 📌 Calcular puntuaciones totales
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
-        st.write(f"**Titular:** {titular}")
-        st.write(f"**Reacción:** {reaccion}")
+        #st.write(f"**Titular:** {titular}")
+        #st.write(f"**Reacción:** {reaccion}")
         analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
         analisis_total += analisis_reaccion + "\n"
 
