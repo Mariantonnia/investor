@@ -20,11 +20,11 @@ llm = ChatGroq(
     max_retries=2
 )
 noticias = [
-    "La inflación supera las expectativas, generando preocupación en los mercados.",
-    "Empresa tecnológica lanza un nuevo producto innovador, impulsando sus acciones.",
-    "Cambios regulatorios en el sector energético generan incertidumbre entre los inversores.",
-    "Informe revela un aumento en la inversión en energías renovables, con impacto positivo en el sector.",
-    "Tensiones geopolíticas aumentan la volatilidad en los mercados globales."
+    "Repsol, entre las 50 empresas que más responsabilidad histórica tienen en el calentamiento global",
+    "Amancio Ortega crea un fondo de 100 millones de euros para los afectados de la dana",
+    "Freshly Cosmetics despide a 52 empleados en Reus, el 18% de la plantilla",
+    "Wall Street y los mercados globales caen ante la incertidumbre por la guerra comercial y el temor a una recesión",
+    "El mercado de criptomonedas se desploma: Bitcoin cae a 80.000 dólares, las altcoins se hunden en medio de una frenética liquidación"
 ]
 
 
