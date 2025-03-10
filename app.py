@@ -81,10 +81,14 @@ if st.session_state.contador < len(noticias):
 else:
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
+        st.write(f"**Titular:** {titular}")
+        st.write(f"**Reacción:** {reaccion}")
         analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
         analisis_total += analisis_reaccion + "\n"
 
     perfil = cadena_perfil.run(analisis=analisis_total)
+    st.write(f"**Perfil del inversor:** {perfil}")
+    print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
 
     # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {}
@@ -92,7 +96,7 @@ else:
     puntuaciones["Social"] = int(re.search(r"Social: (\d+)", perfil).group(1))
     puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil).group(1))
     puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil).group(1))
-    
+
     # Crear gráfico de barras
     categorias = list(puntuaciones.keys())
     valores = list(puntuaciones.values())
