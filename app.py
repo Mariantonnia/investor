@@ -18,8 +18,6 @@ llm = ChatGroq(
     timeout=None,
     max_retries=2
 )
-
-
 noticias = [
     "La inflación supera las expectativas, generando preocupación en los mercados.",
     "Empresa tecnológica lanza un nuevo producto innovador, impulsando sus acciones.",
@@ -49,16 +47,35 @@ Genera un perfil de inversor con enfoque en ESG y aversión al riesgo:
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
 cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
 
+if "contador" not in st.session_state:
+    st.session_state.contador = 0
+    st.session_state.reacciones = []
+    st.session_state.titulares = []
+
 st.title("Análisis de Sentimiento de Inversores")
 
-for noticia in noticias:
+if st.session_state.contador < len(noticias):
+    noticia = noticias[st.session_state.contador]
     titular = cadena_titular.run(noticia=noticia)
+    st.session_state.titulares.append(titular)
     st.write(f"**Titular:** {titular}")
 
-    reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=noticia)
+    reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?")
 
     if reaccion:
+        st.session_state.reacciones.append(reaccion)
+        st.session_state.contador += 1
+        st.experimental_rerun()  # Recarga la app para mostrar la siguiente pregunta
+else:
+    analisis_total = ""
+    for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
+        st.write(f"**Titular:** {titular}")
+        st.write(f"**Reacción:** {reaccion}")
         analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
+        analisis_total += analisis_reaccion + "\n"
+
+    perfil = cadena_perfil.run(analisis=analisis_total)
+    st.write(f"**Perfil del inversor:** {perfil}")
         st.write(f"**Análisis de reacción:** {analisis_reaccion}")
 
         perfil = cadena_perfil.run(analisis=analisis_reaccion)
