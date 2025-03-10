@@ -8,11 +8,14 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.prompts import PromptTemplate
 import re
 import matplotlib.pyplot as plt
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+client = gspread.authorize(creds)
 
 os.environ["GROQ_API_KEY"] = "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"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "langchain-academy"
-sheet = client.open_by_key("1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8").sheet1  # Reemplázalo con el ID real
+sheet = client.open_by_key("1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8").worksheet("Hoja 1")  # Reemplázalo con el ID real
 # Configurar el modelo de Groq
 llm = ChatGroq(
     model="deepseek-r1-distill-llama-70b",
