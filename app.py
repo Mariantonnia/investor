@@ -71,13 +71,14 @@ else:
 
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
+    print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
 
-    # Extraer puntuaciones del perfil
+    # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {}
-    for item in perfil.split(", "):
-        if ": " in item:  # Agregar esta verificación
-            clave, valor = item.split(": ")
-            puntuaciones[clave] = int(valor)
+    puntuaciones["Ambiental"] = int(re.search(r"Ambiental: (\d+)", perfil).group(1))
+    puntuaciones["Social"] = int(re.search(r"Social: (\d+)", perfil).group(1))
+    puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil).group(1))
+    puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil).group(1))
 
     # Crear gráfico de barras
     categorias = list(puntuaciones.keys())
