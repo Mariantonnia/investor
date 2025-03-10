@@ -27,12 +27,6 @@ noticias = [
     "Tensiones geopolíticas aumentan la volatilidad en los mercados globales."
 ]
 
-plantilla_titular = """
-Noticia: {noticia}
-Genera un titular conciso y atractivo para inversores:
-"""
-prompt_titular = PromptTemplate(template=plantilla_titular, input_variables=["noticia"])
-cadena_titular = LLMChain(llm=llm, prompt=prompt_titular)
 
 plantilla_reaccion = """
 Reacción del inversor: {reaccion}
@@ -57,9 +51,8 @@ st.title("Análisis de Sentimiento de Inversores")
 
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
-    titular = cadena_titular.run(noticia=noticia)
-    st.session_state.titulares.append(titular)
-    st.write(f"**Titular:** {titular}")
+    st.session_state.titulares.append(noticia)  # Usamos la noticia como titular
+    st.write(f"**Titular:** {noticia}")
 
     # Clave única para cada noticia
     reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=f"reaccion_{st.session_state.contador}")
@@ -71,8 +64,8 @@ if st.session_state.contador < len(noticias):
 else:
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
-        #st.write(f"**Titular:** {titular}")
-        #st.write(f"**Reacción:** {reaccion}")
+        st.write(f"**Titular:** {titular}")
+        st.write(f"**Reacción:** {reaccion}")
         analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
         analisis_total += analisis_reaccion + "\n"
 
