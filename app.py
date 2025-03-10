@@ -27,8 +27,6 @@ noticias = [
     "Wall Street y los mercados globales caen ante la incertidumbre por la guerra comercial y el temor a una recesión",
     "El mercado de criptomonedas se desploma: Bitcoin cae a 80.000 dólares, las altcoins se hunden en medio de una frenética liquidación"
 ]
-
-
 plantilla_reaccion = """
 Reacción del inversor: {reaccion}
 Analiza el sentimiento y la preocupación expresada:
@@ -45,14 +43,10 @@ Devuelve las 4 puntuaciones en formato: Ambiental: [puntuación], Social: [puntu
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
 cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
 
-# Definición de la función reset_session al principio
-def reset_session():
+if "contador" not in st.session_state:
     st.session_state.contador = 0
     st.session_state.reacciones = []
     st.session_state.titulares = []
-
-if "contador" not in st.session_state:
-    reset_session()
 
 st.title("Análisis de Sentimiento de Inversores")
 
@@ -77,13 +71,16 @@ else:
 
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
+    print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
 
+    # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {}
     puntuaciones["Ambiental"] = int(re.search(r"Ambiental: (\d+)", perfil).group(1))
     puntuaciones["Social"] = int(re.search(r"Social: (\d+)", perfil).group(1))
     puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil).group(1))
     puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil).group(1))
 
+    # Crear gráfico de barras
     categorias = list(puntuaciones.keys())
     valores = list(puntuaciones.values())
 
@@ -92,8 +89,5 @@ else:
     ax.set_ylabel("Puntuación (0-100)")
     ax.set_title("Perfil del Inversor")
 
+    # Mostrar gráfico en Streamlit
     st.pyplot(fig)
-
-if st.button("Reset"):
-    reset_session()
-    st.rerun()
