@@ -117,8 +117,6 @@ else:
     ax.set_ylabel("Puntuación (0-100)")
     ax.set_title("Perfil del Inversor")
 
-    # 📌 Mostrar gráfico en Streamlit
-    st.pyplot(fig)
 
     # 📌 Guardar en Google Sheets una sola fila con todas las respuestas y puntuaciones
     try:
@@ -134,7 +132,9 @@ else:
     except Exception as e:
         st.write(f"❌ Error al guardar los datos en Google Sheets: {e}")
         st.stop()  # Detener si ocurre un error en el proceso de escritura
-
+    # 📌 Mostrar gráfico en Streamlit
+    st.pyplot(fig)
+    
     # 📌 Reiniciar la sesión después de completar todas las noticias
     st.session_state.contador = 0
     st.session_state.reacciones = []
