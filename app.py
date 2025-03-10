@@ -22,7 +22,7 @@ except Exception as e:
 # Conectar con la hoja de cálculo
 SHEET_ID = "1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8"
 try:
-    sheet = client.open_by_key(SHEET_ID).worksheet("Hoja 1")
+    sheet = client.open_by_key("1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8").worksheet("Hoja 1")
     st.write("✅ Hoja de Google Sheets cargada correctamente.")
 except Exception as e:
     st.write(f"❌ Error al acceder a la hoja de cálculo: {e}")
