@@ -73,7 +73,7 @@ else:
 
     perfil = cadena_perfil.run(analisis=analisis_total)
     #st.write(f"**Perfil del inversor:** {perfil}")
-    #print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
+    print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
 
     # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {}
