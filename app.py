@@ -11,11 +11,20 @@ import uuid  # Para generar un ID único de sesión
 # 📌 Configurar conexión con Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
-client = gspread.authorize(creds)
+
+try:
+    client = gspread.authorize(creds)
+    st.write("✅ Conexión con Google Sheets establecida correctamente.")
+except Exception as e:
+    st.write(f"❌ Error al conectar con Google Sheets: {e}")
 
 # 📌 Conectar con la hoja de cálculo (ID de la hoja de Google)
 SHEET_ID = "1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8"
-sheet = client.open_by_key(SHEET_ID).worksheet("Hoja 1")
+try:
+    sheet = client.open_by_key(SHEET_ID).worksheet("Hoja 1")
+    st.write("✅ Hoja de Google Sheets cargada correctamente.")
+except Exception as e:
+    st.write(f"❌ Error al acceder a la hoja de cálculo: {e}")
 
 # 📌 Configurar el modelo LLM
 os.environ["GROQ_API_KEY"] = "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"
@@ -110,18 +119,21 @@ else:
     st.pyplot(fig)
 
     # 📌 Guardar en Google Sheets una sola fila con todas las respuestas y puntuaciones
-    fila = [st.session_state.usuario_id] + st.session_state.reacciones + [
-        puntuaciones["Ambiental"],
-        puntuaciones["Social"],
-        puntuaciones["Gobernanza"],
-        puntuaciones["Riesgo"]
-    ]
-    sheet.append_row(fila)
-
-    st.write("✅ **Datos guardados en Google Sheets automáticamente.**")
+    try:
+        fila = [st.session_state.usuario_id] + st.session_state.reacciones + [
+            puntuaciones["Ambiental"],
+            puntuaciones["Social"],
+            puntuaciones["Gobernanza"],
+            puntuaciones["Riesgo"]
+        ]
+        sheet.append_row(fila)
+        st.write("✅ **Datos guardados en Google Sheets automáticamente.**")
+    except Exception as e:
+        st.write(f"❌ Error al guardar los datos en Google Sheets: {e}")
 
     # 📌 Reiniciar la sesión después de completar todas las noticias
     st.session_state.contador = 0
     st.session_state.reacciones = []
     st.session_state.titulares = []
     st.session_state.usuario_id = str(uuid.uuid4())[:8]  # Nuevo ID para el siguiente usuario
+
