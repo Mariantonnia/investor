@@ -70,7 +70,7 @@ st.title("Análisis de Sentimiento de Inversores")
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
     st.session_state.titulares.append(noticia)
-    st.write(f"**Titular:** {noticia}")
+    #st.write(f"**Titular:** {noticia}")
 
     reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=f"reaccion_{st.session_state.contador}")
 
