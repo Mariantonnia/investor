@@ -79,6 +79,7 @@ if st.session_state.contador < len(noticias):
         st.session_state.contador += 1
         st.rerun()
 else:
+    st.clear()
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
         #st.write(f"**Titular:** {titular}")
