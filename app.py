@@ -29,7 +29,7 @@ noticias = [
 
 plantilla_titular = """
 Noticia: {noticia}
-Genera un titular conciso y atractivo para inversores (solo el titular, sin detalles adicionales):
+Genera un titular conciso y atractivo para inversores:
 """
 prompt_titular = PromptTemplate(template=plantilla_titular, input_variables=["noticia"])
 cadena_titular = LLMChain(llm=llm, prompt=prompt_titular)
@@ -46,7 +46,7 @@ Análisis de reacciones: {analisis}
 Genera un perfil de inversor con enfoque en ESG y aversión al riesgo:
 """
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
-cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
+cadena_perfil = LLMChain(llm=llm, prompt=cadena_perfil)
 
 if "contador" not in st.session_state:
     st.session_state.contador = 0
@@ -57,21 +57,12 @@ st.title("Análisis de Sentimiento de Inversores")
 
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
-    resultado_titular = cadena_titular.run(noticia=noticia).strip()
-    # Extracción del titular usando expresiones regulares
-    match = re.search(r'"([^"]*)"$', resultado_titular) #Busca la ultima frase entre comillas
-    if match:
-        titular = match.group(1).strip()
-    else:
-        lines = resultado_titular.split('\n')
-        for line in reversed(lines):
-            if "<think>" not in line:
-                titular = line.strip()
-                break
+    titular = cadena_titular.run(noticia=noticia)
     st.session_state.titulares.append(titular)
     st.write(f"**Titular:** {titular}")
 
-    reaccion = st.text_input(f"Hola, ¿cuál es tu opinión sobre {titular}?", key=f"reaccion_{st.session_state.contador}")
+    # Clave única para cada noticia
+    reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=f"reaccion_{st.session_state.contador}")
 
     if reaccion:
         st.session_state.reacciones.append(reaccion)
