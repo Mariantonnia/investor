@@ -2,7 +2,7 @@ import streamlit as st
 from langchain import LLMChain
 from langchain_groq import ChatGroq
 import os
-from transformers import pipeline
+#from transformers import pipeline
 from langgraph.graph import MessagesState
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.prompts import PromptTemplate
