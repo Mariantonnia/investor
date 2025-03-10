@@ -1,4 +1,49 @@
+import streamlit as st
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from langchain import LLMChain, PromptTemplate
+from langchain_groq import ChatGroq
+import os
+import re
+import matplotlib.pyplot as plt
+import uuid
 
+# Configurar conexión con Google Sheets
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+
+try:
+    client = gspread.authorize(creds)
+    st.write("✅ Conexión con Google Sheets establecida correctamente.")
+except Exception as e:
+    st.write(f"❌ Error al conectar con Google Sheets: {e}")
+    st.stop()
+
+# Conectar con la hoja de cálculo
+SHEET_ID = "1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8"
+try:
+    sheet = client.open_by_key("1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8").worksheet("Hoja 1")
+    st.write("✅ Hoja de Google Sheets cargada correctamente.")
+except Exception as e:
+    st.write(f"❌ Error al acceder a la hoja de cálculo: {e}")
+    st.stop()
+
+# Configurar el modelo LLM
+os.environ["GROQ_API_KEY"] = "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"
+lm = ChatGroq(
+    model="deepseek-r1-distill-llama-70b",
+    temperature=0,
+    max_tokens=None,
+    timeout=None,
+    max_retries=2
+)
+noticias = [
+    "Repsol, entre las 50 empresas que más responsabilidad histórica tienen en el calentamiento global",
+    "Amancio Ortega crea un fondo de 100 millones de euros para los afectados de la dana",
+    "Freshly Cosmetics despide a 52 empleados en Reus, el 18% de la plantilla",
+    "Wall Street y los mercados globales caen ante la incertidumbre por la guerra comercial y el temor a una recesión",
+    "El mercado de criptomonedas se desploma: Bitcoin cae a 80.000 dólares, las altcoins se hunden en medio de una frenética liquidación"
+]
 plantilla_reaccion = """
 Reacción del inversor: {reaccion}
 Analiza el sentimiento y la preocupación expresada:
