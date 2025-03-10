@@ -80,11 +80,7 @@ if st.session_state.contador < len(noticias):
         st.rerun()
 else:
     analisis_total = ""
-    for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
-        #st.write(f"**Titular:** {titular}")
-        #st.write(f"**Reacción:** {reaccion}")
-        analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
-        analisis_total += analisis_reaccion + "\n"
+
 
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
