@@ -30,7 +30,7 @@ except Exception as e:
 
 # Configurar el modelo LLM
 os.environ["GROQ_API_KEY"] = "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"
-llm = ChatGroq(
+lm = ChatGroq(
     model="deepseek-r1-distill-llama-70b",
     temperature=0,
     max_tokens=None,
@@ -81,8 +81,8 @@ if st.session_state.contador < len(noticias):
 else:
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
-        #st.write(f"**Titular:** {titular}")
-        #st.write(f"**Reacción:** {reaccion}")
+        st.write(f"**Titular:** {titular}")
+        st.write(f"**Reacción:** {reaccion}")
         analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
         analisis_total += analisis_reaccion + "\n"
 
