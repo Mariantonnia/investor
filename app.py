@@ -48,7 +48,7 @@ if "contador" not in st.session_state:
     st.session_state.reacciones = []
     st.session_state.titulares = []
 
-st.title("Análisis de Sentimiento de Inversores")
+st.title("Análisis perfil ESG y riesgo Inversores")
 
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
