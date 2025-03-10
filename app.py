@@ -56,7 +56,8 @@ st.title("Análisis de Sentimiento de Inversores")
 
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
-    titular = cadena_titular.run(noticia=noticia).strip()
+    resultado_titular = cadena_titular.run(noticia=noticia).strip()
+    titular = resultado_titular.split('\n')[-1].strip().replace('"','') #Extraemos la ultima linea del resultado
     st.session_state.titulares.append(titular)
     st.write(f"**Titular:** {titular}")
 
