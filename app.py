@@ -7,6 +7,7 @@ import os
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.prompts import PromptTemplate
 import re
+import matplotlib.pyplot as plt
 
 os.environ["GROQ_API_KEY"] = "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"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
@@ -27,7 +28,6 @@ noticias = [
     "El mercado de criptomonedas se desploma: Bitcoin cae a 80.000 dólares, las altcoins se hunden en medio de una frenética liquidación"
 ]
 
-
 plantilla_reaccion = """
 Reacción del inversor: {reaccion}
 Analiza el sentimiento y la preocupación expresada:
@@ -37,8 +37,8 @@ cadena_reaccion = LLMChain(llm=llm, prompt=prompt_reaccion)
 
 plantilla_perfil = """
 Análisis de reacciones: {analisis}
-Genera un perfil detallado del inversor basado en sus reacciones, enfocándote en los pilares ESG (Ambiental, Social y Gobernanza) y su aversión al riesgo. 
-Asigna una puntuación de 0 a 100 para cada pilar ESG y para el riesgo, donde 0 indica ninguna preocupación y 100 máxima preocupación o aversión:
+Genera un perfil de inversor con enfoque en E,S,G y aversión al riesgo, dando una puntuación de 0 a 100 para cada pilar (E,S,G) y para el riesgo, en total 4 puntuaciones, significando 0 que no tiene preocupaciones por E,S,G o el riesgo y 100 que está totalmente concienciado y es muy averso al riesgo.
+Devuelve las 4 puntuaciones en formato: Ambiental: [puntuación], Social: [puntuación], Gobernanza: [puntuación], Riesgo: [puntuación]
 """
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
 cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
@@ -52,10 +52,9 @@ st.title("Análisis de Sentimiento de Inversores")
 
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
-    st.session_state.titulares.append(noticia)  # Usamos la noticia como titular
+    st.session_state.titulares.append(noticia)
     st.write(f"**Titular:** {noticia}")
 
-    # Clave única para cada noticia
     reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=f"reaccion_{st.session_state.contador}")
 
     if reaccion:
@@ -65,10 +64,28 @@ if st.session_state.contador < len(noticias):
 else:
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
-        #st.write(f"**Titular:** {titular}")
-        #st.write(f"**Reacción:** {reaccion}")
+        st.write(f"**Titular:** {titular}")
+        st.write(f"**Reacción:** {reaccion}")
         analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
         analisis_total += analisis_reaccion + "\n"
 
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
+
+    # Extraer puntuaciones del perfil
+    puntuaciones = {}
+    for item in perfil.split(", "):
+        clave, valor = item.split(": ")
+        puntuaciones[clave] = int(valor)
+
+    # Crear gráfico de barras
+    categorias = list(puntuaciones.keys())
+    valores = list(puntuaciones.values())
+
+    fig, ax = plt.subplots()
+    ax.bar(categorias, valores)
+    ax.set_ylabel("Puntuación (0-100)")
+    ax.set_title("Perfil del Inversor")
+
+    # Mostrar gráfico en Streamlit
+    st.pyplot(fig)
