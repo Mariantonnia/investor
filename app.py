@@ -1,14 +1,14 @@
 import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from langchain import LLMChain
+from langchain import LLMChain, PromptTemplate
 from langchain_groq import ChatGroq
 import os
 import re
 import matplotlib.pyplot as plt
-import uuid  # Para generar un ID único de sesión
+import uuid
 
-# 📌 Configurar conexión con Google Sheets
+# Configurar conexión con Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 
@@ -17,18 +17,18 @@ try:
     st.write("✅ Conexión con Google Sheets establecida correctamente.")
 except Exception as e:
     st.write(f"❌ Error al conectar con Google Sheets: {e}")
-    st.stop()  # Detener la ejecución si no hay conexión
+    st.stop()
 
-# 📌 Conectar con la hoja de cálculo (ID de la hoja de Google)
+# Conectar con la hoja de cálculo
 SHEET_ID = "1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8"
 try:
     sheet = client.open_by_key(SHEET_ID).worksheet("Hoja 1")
     st.write("✅ Hoja de Google Sheets cargada correctamente.")
 except Exception as e:
     st.write(f"❌ Error al acceder a la hoja de cálculo: {e}")
-    st.stop()  # Detener la ejecución si no se puede acceder a la hoja
+    st.stop()
 
-# 📌 Configurar el modelo LLM
+# Configurar el modelo LLM
 os.environ["GROQ_API_KEY"] = "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"
 llm = ChatGroq(
     model="deepseek-r1-distill-llama-70b",
@@ -38,7 +38,7 @@ llm = ChatGroq(
     max_retries=2
 )
 
-# 📌 Noticias
+# Noticias
 noticias = [
     "Repsol, entre las 50 empresas que más responsabilidad histórica tienen en el calentamiento global",
     "Amancio Ortega crea un fondo de 100 millones de euros para los afectados de la dana",
@@ -47,7 +47,7 @@ noticias = [
     "El mercado de criptomonedas se desploma: Bitcoin cae a 80.000 dólares, las altcoins se hunden en medio de una frenética liquidación"
 ]
 
-# 📌 Plantillas de prompts
+# Plantillas de prompts
 plantilla_reaccion = """
 Reacción del inversor: {reaccion}
 Analiza el sentimiento y la preocupación expresada:
@@ -64,12 +64,12 @@ Devuelve las 4 puntuaciones en formato: Ambiental: [puntuación], Social: [puntu
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
 cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
 
-# 📌 Inicializar estado en Streamlit
+# Inicializar estado en Streamlit
 if "contador" not in st.session_state:
     st.session_state.contador = 0
     st.session_state.reacciones = []
     st.session_state.titulares = []
-    st.session_state.usuario_id = str(uuid.uuid4())[:8]  # Genera un ID único para el usuario
+    st.session_state.usuario_id = str(uuid.uuid4())[:8]
 
 st.title("Análisis de Sentimiento de Inversores")
 
@@ -81,17 +81,12 @@ if st.session_state.contador < len(noticias):
     reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=f"reaccion_{st.session_state.contador}")
 
     if reaccion:
-        # Guardar reacción en la sesión
         st.session_state.reacciones.append(reaccion)
-
-        # 📌 Pasar al siguiente titular automáticamente
         st.session_state.contador += 1
         st.rerun()
 else:
-    # 📌 Mostrar resumen del perfil del inversor
     st.write("### **Resumen del perfil del inversor**")
 
-    # 📌 Analizar todas las reacciones
     analisis_total = ""
     for reaccion in st.session_state.reacciones:
         analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
@@ -100,15 +95,13 @@ else:
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
 
-    # 📌 Extraer puntuaciones ESG y de riesgo
     puntuaciones = {
-        "Ambiental": int(re.search(r"Ambiental: (\d+)", perfil).group(1)),
-        "Social": int(re.search(r"Social: (\d+)", perfil).group(1)),
-        "Gobernanza": int(re.search(r"Gobernanza: (\d+)", perfil).group(1)),
-        "Riesgo": int(re.search(r"Riesgo: (\d+)", perfil).group(1)),
+        "Ambiental": int(re.search(r"Ambiental: (\d+)", perfil).group(1)) if re.search(r"Ambiental: (\d+)", perfil) else 0,
+        "Social": int(re.search(r"Social: (\d+)", perfil).group(1)) if re.search(r"Social: (\d+)", perfil) else 0,
+        "Gobernanza": int(re.search(r"Gobernanza: (\d+)", perfil).group(1)) if re.search(r"Gobernanza: (\d+)", perfil) else 0,
+        "Riesgo": int(re.search(r"Riesgo: (\d+)", perfil).group(1)) if re.search(r"Riesgo: (\d+)", perfil) else 0,
     }
 
-    # 📌 Crear gráfico de barras
     categorias = list(puntuaciones.keys())
     valores = list(puntuaciones.values())
 
@@ -117,8 +110,6 @@ else:
     ax.set_ylabel("Puntuación (0-100)")
     ax.set_title("Perfil del Inversor")
 
-
-    # 📌 Guardar en Google Sheets una sola fila con todas las respuestas y puntuaciones
     try:
         fila = [st.session_state.usuario_id] + st.session_state.reacciones + [
             puntuaciones["Ambiental"],
@@ -130,13 +121,12 @@ else:
         sheet.append_row(fila)
         st.write("✅ **Datos guardados en Google Sheets automáticamente.**")
     except Exception as e:
-        st.write(f"❌ Error al guardar los datos en Google Sheets: {e}")
-        st.stop()  # Detener si ocurre un error en el proceso de escritura
-    # 📌 Mostrar gráfico en Streamlit
+        st.write(f"❌ Error al guardar los datos en Google Sheets: {e}, tipo de error: {type(e)}")
+        st.stop()
+
     st.pyplot(fig)
-    
-    # 📌 Reiniciar la sesión después de completar todas las noticias
+
     st.session_state.contador = 0
     st.session_state.reacciones = []
     st.session_state.titulares = []
-    st.session_state.usuario_id = str(uuid.uuid4())[:8]  # Nuevo ID para el siguiente usuario
+    st.session_state.usuario_id = str(uuid.uuid4())[:8]
