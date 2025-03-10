@@ -6,7 +6,6 @@ from langchain_groq import ChatGroq
 import os
 import re
 import matplotlib.pyplot as plt
-import uuid
 
 # Configurar conexión con Google Sheets
 def setup_google_sheets_connection():
@@ -112,16 +111,16 @@ def main():
             st.session_state.contador += 1
             st.rerun()
     else:
+        # Acumular todas las reacciones para el análisis
         analisis_total = ""
-        for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
-            st.write(f"**Titular:** {titular}")
-            st.write(f"**Reacción:** {reaccion}")
+        for reaccion in st.session_state.reacciones:
             analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
             analisis_total += analisis_reaccion + "\n"
 
+        # Generar el perfil del inversor
         perfil = cadena_perfil.run(analisis=analisis_total)
-        st.write(f"**Perfil del inversor:** {perfil}")
-        print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
+        st.write("**Perfil del inversor:**")
+        st.write(perfil)
 
         # Extraer puntuaciones del perfil con expresiones regulares
         puntuaciones = {}
