@@ -87,7 +87,7 @@ else:
         analisis_total += analisis_reaccion + "\n"
 
     perfil = cadena_perfil.run(analisis=analisis_total)
-    #st.write(f"**Perfil del inversor:** {perfil}")
+    st.write(f"**Perfil del inversor:** {perfil}")
     print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
 
     # Extraer puntuaciones del perfil con expresiones regulares
@@ -108,10 +108,3 @@ else:
 
     # Mostrar gráfico en Streamlit
     st.pyplot(fig)
-
-    # Preparar datos para Google Sheets en una sola fila
-    datos_hoja = st.session_state.titulares + st.session_state.reacciones + list(puntuaciones.values())
-
-    # Escribir datos en Google Sheets
-    sheet.append_row(datos_hoja)
-    st.write("✅ Datos guardados en Google Sheets.")
