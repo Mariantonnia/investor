@@ -2,6 +2,10 @@ import streamlit as st
 from langchain import LLMChain
 from langchain_groq import ChatGroq
 import os
+from transformers import pipeline
+from langgraph.graph import MessagesState
+from langchain_core.messages import HumanMessage, SystemMessage
+
 os.environ["GROQ_API_KEY"] = "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"
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "langchain-academy"
@@ -14,19 +18,56 @@ llm = ChatGroq(
     max_retries=2
 )
 
-# Crear una cadena de procesamiento de lenguaje con LangChain
+import streamlit as st
+from langchain.llms import OpenAI
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
+import os
 
-# Configurar la interfaz de Streamlit
-st.title("Aplicación Básica de LangChain con Streamlit")
-st.write("Esta es una aplicación de demostración que utiliza LangChain con el modelo de Groq y Streamlit.")
+os.environ["OPENAI_API_KEY"] = "TU_API_KEY"
 
-# Entrada de texto del usuario
-user_input = st.text_input("Escribe algo:")
+llm = OpenAI(temperature=0.7)
 
-# Procesar la entrada del usuario con LangChain
-if user_input:
-    response = llm.run(user_input)
-    st.write("Respuesta de LangChain:")
-    st.write(response)
-else:
-    st.write("Por favor, escribe algo en la caja de texto.")
+noticias = [
+    "La inflación supera las expectativas, generando preocupación en los mercados.",
+    "Empresa tecnológica lanza un nuevo producto innovador, impulsando sus acciones.",
+    "Cambios regulatorios en el sector energético generan incertidumbre entre los inversores.",
+    "Informe revela un aumento en la inversión en energías renovables, con impacto positivo en el sector.",
+    "Tensiones geopolíticas aumentan la volatilidad en los mercados globales."
+]
+
+plantilla_titular = """
+Noticia: {noticia}
+Genera un titular conciso y atractivo para inversores:
+"""
+prompt_titular = PromptTemplate(template=plantilla_titular, input_variables=["noticia"])
+cadena_titular = LLMChain(llm=llm, prompt=prompt_titular)
+
+plantilla_reaccion = """
+Reacción del inversor: {reaccion}
+Analiza el sentimiento y la preocupación expresada:
+"""
+prompt_reaccion = PromptTemplate(template=plantilla_reaccion, input_variables=["reaccion"])
+cadena_reaccion = LLMChain(llm=llm, prompt=prompt_reaccion)
+
+plantilla_perfil = """
+Análisis de reacciones: {analisis}
+Genera un perfil de inversor con enfoque en ESG y aversión al riesgo:
+"""
+prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
+cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
+
+st.title("Análisis de Sentimiento de Inversores")
+
+for noticia in noticias:
+    titular = cadena_titular.run(noticia=noticia)
+    st.write(f"**Titular:** {titular}")
+
+    reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=noticia)
+
+    if reaccion:
+        analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
+        st.write(f"**Análisis de reacción:** {analisis_reaccion}")
+
+        perfil = cadena_perfil.run(analisis=analisis_reaccion)
+        st.write(f"**Perfil del inversor:** {perfil}")
