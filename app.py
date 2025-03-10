@@ -65,7 +65,7 @@ if st.session_state.contador < len(noticias):
     if reaccion:
         st.session_state.reacciones.append(reaccion)
         st.session_state.contador += 1
-        st.experimental_rerun()  # Recarga la app para mostrar la siguiente pregunta
+        st.rerun()  # Recarga la app para mostrar la siguiente pregunta
 else:
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
