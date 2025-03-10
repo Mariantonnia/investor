@@ -12,21 +12,6 @@ import uuid
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
 
-try:
-    client = gspread.authorize(creds)
-    st.write("✅ Conexión con Google Sheets establecida correctamente.")
-except Exception as e:
-    st.write(f"❌ Error al conectar con Google Sheets: {e}")
-    st.stop()
-
-# Conectar con la hoja de cálculo
-SHEET_ID = "1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8"
-try:
-    sheet = client.open_by_key("1X5ZPr7CY0V5EDAffdgslDdYL9caj8ltduOcmCqfGBy8").worksheet("Hoja 1")
-    st.write("✅ Hoja de Google Sheets cargada correctamente.")
-except Exception as e:
-    st.write(f"❌ Error al acceder a la hoja de cálculo: {e}")
-    st.stop()
 
 # Configurar el modelo LLM
 os.environ["GROQ_API_KEY"] = "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"
