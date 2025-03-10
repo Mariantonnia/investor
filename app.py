@@ -8,11 +8,6 @@ import re
 import matplotlib.pyplot as plt
 import uuid
 
-# Configurar conexión con Google Sheets
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
-
-
 # Configurar el modelo LLM
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 llm = ChatGroq(
