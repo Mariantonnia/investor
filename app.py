@@ -19,15 +19,6 @@ llm = ChatGroq(
     max_retries=2
 )
 
-import streamlit as st
-from langchain.llms import OpenAI
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-import os
-
-os.environ["OPENAI_API_KEY"] = "TU_API_KEY"
-
-llm = OpenAI(temperature=0.7)
 
 noticias = [
     "La inflación supera las expectativas, generando preocupación en los mercados.",
