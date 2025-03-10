@@ -28,7 +28,7 @@ noticias = [
 
 plantilla_titular = """
 Noticia: {noticia}
-Genera un titular conciso y atractivo para inversores:
+Genera un titular conciso y atractivo para inversores (solo el titular, sin detalles adicionales):
 """
 prompt_titular = PromptTemplate(template=plantilla_titular, input_variables=["noticia"])
 cadena_titular = LLMChain(llm=llm, prompt=prompt_titular)
@@ -56,7 +56,7 @@ st.title("Análisis de Sentimiento de Inversores")
 
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
-    titular = cadena_titular.run(noticia=noticia).strip() #Eliminamos espacios en blanco
+    titular = cadena_titular.run(noticia=noticia).strip()
     st.session_state.titulares.append(titular)
     st.write(f"**Titular:** {titular}")
 
