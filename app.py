@@ -2,8 +2,6 @@ import streamlit as st
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-import matplotlib.pyplot as plt
-import re # Importa expresiones regulares
 
 # Asegúrate de reemplazar "tu_api_key" con tu clave de API de OpenAI
 llm = OpenAI(openai_api_key="tu_api_key")
@@ -25,9 +23,7 @@ cadena_reaccion = LLMChain(llm=llm, prompt=prompt_reaccion)
 
 plantilla_perfil = """
 Análisis de reacciones: {analisis}
-Genera un perfil detallado del inversor basado en sus reacciones, enfocándote en los pilares ESG (Ambiental, Social y Gobernanza) y su aversión al riesgo. 
-Asigna una puntuación de 0 a 100 para cada pilar ESG y para el riesgo, donde 0 indica ninguna preocupación y 100 máxima preocupación o aversión. 
-Devuelve las 4 puntuaciones en formato: Ambiental: [puntuación], Social: [puntuación], Gobernanza: [puntuación], Riesgo: [puntuación]
+Genera un perfil de inversor con enfoque en E,S,G y aversión al riesgo, dando una puntuación de 0 a 100 para cada pilar (E,S,G) y para el riesgo, en total 4 puntuaciones, significando 0 que no tiene preocupaciones por E,S,G o el riesgo y 100 que está totalmente concienciado y es muy averso al riesgo:
 """
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
 cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
@@ -41,9 +37,10 @@ st.title("Análisis de Sentimiento de Inversores")
 
 if st.session_state.contador < len(noticias):
     noticia = noticias[st.session_state.contador]
-    st.session_state.titulares.append(noticia)
+    st.session_state.titulares.append(noticia)  # Usamos la noticia como titular
     st.write(f"**Titular:** {noticia}")
 
+    # Clave única para cada noticia
     reaccion = st.text_input(f"¿Cuál es tu reacción a esta noticia?", key=f"reaccion_{st.session_state.contador}")
 
     if reaccion:
@@ -60,23 +57,3 @@ else:
 
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
-    print(f"Respuesta del modelo:{perfil}") # Imprime la respuesta
-
-    # Extraer puntuaciones del perfil con expresiones regulares
-    puntuaciones = {}
-    puntuaciones["Ambiental"] = int(re.search(r"Ambiental: (\d+)", perfil).group(1))
-    puntuaciones["Social"] = int(re.search(r"Social: (\d+)", perfil).group(1))
-    puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil).group(1))
-    puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil).group(1))
-
-    # Crear gráfico de barras
-    categorias = list(puntuaciones.keys())
-    valores = list(puntuaciones.values())
-
-    fig, ax = plt.subplots()
-    ax.bar(categorias, valores)
-    ax.set_ylabel("Puntuación (0-100)")
-    ax.set_title("Perfil del Inversor")
-
-    # Mostrar gráfico en Streamlit
-    st.pyplot(fig)
