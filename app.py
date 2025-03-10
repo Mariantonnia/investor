@@ -99,6 +99,7 @@ def main():
         "El mercado de criptomonedas se desploma: Bitcoin cae a 80.000 dólares, las altcoins se hunden en medio de una frenética liquidación"
     ]
 
+    # Fase de entrada de datos
     if st.session_state.contador < len(noticias):
         noticia = noticias[st.session_state.contador]
         st.session_state.titulares.append(noticia)
@@ -111,7 +112,7 @@ def main():
             st.session_state.contador += 1
             st.rerun()
     else:
-        # Acumular todas las reacciones para el análisis
+        # Fase de generación del perfil (sin repetir titulares y reacciones)
         analisis_total = ""
         for reaccion in st.session_state.reacciones:
             analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
