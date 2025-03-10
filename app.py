@@ -37,7 +37,7 @@ cadena_reaccion = LLMChain(llm=llm, prompt=prompt_reaccion)
 
 plantilla_perfil = """
 Análisis de reacciones: {analisis}
-Genera un perfil de inversor con enfoque en E,S,G y aversión al riesgo, dando una puntuación de 0 a 100 para cada pilar (E,S,G) y para el riesgo, en total 4 puntuaciones, significando 0 que no tiene preocupaciones por E,S,G o el riesgo y 100 que está totalmente concienciado y es muy averso al riesgo.
+Genera un perfil de inversor con enfoque en E,S,G y aversión al riesgo, dando una puntuación de 0 a 100 para cada pilar (E,S,G) y para el riesgo, en total 4 puntuaciones.
 Devuelve las 4 puntuaciones en formato: Ambiental: [puntuación], Social: [puntuación], Gobernanza: [puntuación], Riesgo: [puntuación]
 """
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
@@ -75,8 +75,9 @@ else:
     # Extraer puntuaciones del perfil
     puntuaciones = {}
     for item in perfil.split(", "):
-        clave, valor = item.split(": ")
-        puntuaciones[clave] = int(valor)
+        if ": " in item:  # Agregar esta verificación
+            clave, valor = item.split(": ")
+            puntuaciones[clave] = int(valor)
 
     # Crear gráfico de barras
     categorias = list(puntuaciones.keys())
