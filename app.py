@@ -92,3 +92,7 @@ else:
 
     # Mostrar gráfico en Streamlit
     st.pyplot(fig)
+if st.button("Reset"):
+    reset_session()
+    st.rerun()
+    
