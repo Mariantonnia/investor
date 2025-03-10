@@ -46,7 +46,7 @@ Análisis de reacciones: {analisis}
 Genera un perfil de inversor con enfoque en ESG y aversión al riesgo:
 """
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
-cadena_perfil = LLMChain(llm=llm, prompt=cadena_perfil)
+cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
 
 if "contador" not in st.session_state:
     st.session_state.contador = 0
