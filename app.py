@@ -38,8 +38,7 @@ cadena_reaccion = LLMChain(llm=llm, prompt=prompt_reaccion)
 plantilla_perfil = """
 Análisis de reacciones: {analisis}
 Genera un perfil detallado del inversor basado en sus reacciones, enfocándote en los pilares ESG (Ambiental, Social y Gobernanza) y su aversión al riesgo. 
-Asigna una puntuación de 0 a 100 para cada pilar ESG y para el riesgo, donde 0 indica ninguna preocupación y 100 máxima preocupación o aversión.
-Proporciona una breve justificación para cada puntuación, explicando por qué asignaste ese valor al inversor:
+Asigna una puntuación de 0 a 100 para cada pilar ESG y para el riesgo, donde 0 indica ninguna preocupación y 100 máxima preocupación o aversión:
 """
 prompt_perfil = PromptTemplate(template=plantilla_perfil, input_variables=["analisis"])
 cadena_perfil = LLMChain(llm=llm, prompt=prompt_perfil)
