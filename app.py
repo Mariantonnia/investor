@@ -76,7 +76,3 @@ else:
 
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
-        st.write(f"**Análisis de reacción:** {analisis_reaccion}")
-
-        perfil = cadena_perfil.run(analisis=analisis_reaccion)
-        st.write(f"**Perfil del inversor:** {perfil}")
