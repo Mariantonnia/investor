@@ -15,7 +15,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", sco
 
 # Configurar el modelo LLM
 os.environ["GROQ_API_KEY"] = "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"
-lm = ChatGroq(
+llm = ChatGroq(
     model="deepseek-r1-distill-llama-70b",
     temperature=0,
     max_tokens=None,
