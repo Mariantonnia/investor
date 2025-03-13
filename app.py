@@ -13,7 +13,7 @@ load_dotenv()
 # Configurar el modelo LLM
 os.environ["GROQ_API_KEY"] = os.getenv("GROQ_API_KEY")
 llm = ChatGroq(
-    model="deepseek-r1-distill-llama-70b",
+    model="llama-guard-3-8b",
     temperature=0,
     max_tokens=None,
     timeout=None,
