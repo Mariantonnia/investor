@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import json
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -77,13 +78,22 @@ else:
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
     print(f"Respuesta del modelo:{perfil}")  # Imprime la respuesta
-
+    
+    # Función para extraer la puntuación de un patrón
+    def extraer_puntuacion(patron, texto):
+        match = re.search(patron, texto)
+        if match:
+            return int(match.group(1))
+        else:
+            st.warning(f"No se encontró una coincidencia para el patrón: {patron}")
+            return 0  # Valor predeterminado si no se encuentra la coincidencia
+    
     # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {}
-    puntuaciones["Ambiental"] = int(re.search(r"Ambiental: (\d+)", perfil))
-    puntuaciones["Social"] = int(re.search(r"Social: (\d+)", perfil))
-    puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil))
-    puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil))
+    puntuaciones["Ambiental"] = extraer_puntuacion(r"ambiental.*?(\d+)", perfil)
+    puntuaciones["Social"] = extraer_puntuacion(r"social.*?(\d+)", perfil)
+    puntuaciones["Gobernanza"] = extraer_puntuacion(r"gobernanza.*?(\d+)", perfil)
+    puntuaciones["Riesgo"] = extraer_puntuacion(r"riesgo.*?(\d+)", perfil)
 
     print(puntuaciones)
     # Crear gráfico de barras
