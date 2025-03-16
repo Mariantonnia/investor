@@ -77,7 +77,6 @@ else:
 
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
-    print(f"Respuesta del modelo:{perfil}")  # Imprime la respuesta
     
     # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {
@@ -113,13 +112,21 @@ else:
     # Abrir la hoja de cálculo
     sheet = client.open('BBDD_RESPUESTAS').sheet1
 
-    # Guardar todas las respuestas en Google Sheets
+    # Construir una sola fila con toda la información
+    fila = []
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
-        fila = [titular, reaccion]
-        sheet.append_row(fila)
+        fila.append(titular)
+        fila.append(reaccion)
+    
+    # Agregar las puntuaciones al final
+    fila.extend([
+        puntuaciones["Ambiental"],
+        puntuaciones["Social"],
+        puntuaciones["Gobernanza"],
+        puntuaciones["Riesgo"]
+    ])
 
-    # Guardar puntuaciones ESG
-    df = pd.DataFrame([puntuaciones])
-    sheet.append_rows(df.values.tolist())
+    # Agregar la fila a Google Sheets
+    sheet.append_row(fila)
 
-    st.success("Respuestas y perfil guardados en Google Sheets.")
+    st.success("Respuestas y perfil guardados en Google Sheets en una misma fila.")
