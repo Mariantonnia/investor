@@ -107,7 +107,9 @@ else:
     except Exception as e:
         st.error(f"Error al cargar las credenciales: {e}")
         st.stop()
-    
+    creds_json = st.secrets["gcp_service_account"]
+    print("Contenido de creds_json:", creds_json)
+
     creds_json = st.secrets["gcp_service_account"]
     if isinstance(creds_json, str):
         creds_json = json.loads(creds_json)  # Convierte string JSON a diccionario
