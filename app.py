@@ -97,18 +97,17 @@ else:
     # Mostrar gráfico en Streamlit
     st.pyplot(fig)
 
-    # Configura el scope para Google Sheets
-    
-    creds_json = st.secrets["gcp_service_account"]
+    try:
+        # Cargar el secreto como JSON
+        creds_json_str = st.secrets["gcp_service_account"]
+        creds_json = json.loads(creds_json_str)  # Convertir a dict
+        print("Tipo de creds_json:", type(creds_json))  # Debe imprimir <class 'dict'>
 
-    # Si creds_json es un string, limpiamos los saltos de línea en la clave privada
-    if isinstance(creds_json, str):
-        creds_json = creds_json.replace("-----BEGIN PRIVATE KEY-----\n", "-----BEGIN PRIVATE KEY-----\\n")
-        creds_json = creds_json.replace("\n", "\\n")  # Escapamos correctamente los saltos de línea
-        creds_json = json.loads(creds_json)  # Convertimos a diccionario
+    except Exception as e:
+        st.error(f"Error al cargar las credenciales: {e}")
+        st.stop()
     
-    # Ahora autoriza
-    from oauth2client.service_account import ServiceAccountCredentials
+    # Autorización con Google Sheets
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
     client = gspread.authorize(creds)
