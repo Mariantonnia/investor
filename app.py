@@ -98,23 +98,18 @@ else:
     st.pyplot(fig)
 
     # Configura el scope para Google Sheets
-    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     
-    # Carga las credenciales desde st.secrets
-    try:
-        creds_json = st.secrets["gcp_service_account"]
-        print(type(creds_json))  # Depuración
-    except Exception as e:
-        st.error(f"Error al cargar las credenciales: {e}")
-        st.stop()
     creds_json = st.secrets["gcp_service_account"]
-    print("Contenido de creds_json:", creds_json)
 
-    creds_json = st.secrets["gcp_service_account"]
+    # Si creds_json es un string, limpiamos los saltos de línea en la clave privada
     if isinstance(creds_json, str):
-        creds_json = json.loads(creds_json)  # Convierte string JSON a diccionario
+        creds_json = creds_json.replace("-----BEGIN PRIVATE KEY-----\n", "-----BEGIN PRIVATE KEY-----\\n")
+        creds_json = creds_json.replace("\n", "\\n")  # Escapamos correctamente los saltos de línea
+        creds_json = json.loads(creds_json)  # Convertimos a diccionario
     
-    # Ahora sí, úsalo con ServiceAccountCredentials
+    # Ahora autoriza
+    from oauth2client.service_account import ServiceAccountCredentials
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
     client = gspread.authorize(creds)
     
