@@ -108,13 +108,13 @@ else:
         st.error(f"Error al cargar las credenciales: {e}")
         st.stop()
     
-    # Autoriza el cliente de Google Sheets
-    try:
-        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
-        client = gspread.authorize(creds)
-    except Exception as e:
-        st.error(f"Error al autorizar el cliente: {e}")
-        st.stop()
+    creds_json = st.secrets["gcp_service_account"]
+    if isinstance(creds_json, str):
+        creds_json = json.loads(creds_json)  # Convierte string JSON a diccionario
+    
+    # Ahora sí, úsalo con ServiceAccountCredentials
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
+    client = gspread.authorize(creds)
     
     # Continúa con el resto del código
     sheet = client.open('BBDD_RESPUESTAS').sheet1
