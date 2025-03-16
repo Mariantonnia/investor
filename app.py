@@ -80,10 +80,10 @@ else:
 
     # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {}
-    puntuaciones["Ambiental"] = int(re.search(r"Ambiental: (\d+)", perfil).group(1))
-    puntuaciones["Social"] = int(re.search(r"Social: (\d+)", perfil).group(1))
-    puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil).group(1))
-    puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil).group(1))
+    puntuaciones["Ambiental"] = int(re.search(r"Ambiental: (\d+)", perfil))
+    puntuaciones["Social"] = int(re.search(r"Social: (\d+)", perfil))
+    puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil))
+    puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil))
 
     print(puntuaciones)
     # Crear gráfico de barras
