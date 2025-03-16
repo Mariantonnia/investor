@@ -101,8 +101,9 @@ else:
     # Guardar datos en excel de google drive.
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     # Recupera las credenciales del secreto de Streamlit
-    creds_json = st.secrets["gcp_service_account"]
-    creds_json = json.loads(creds_json_string)
+    creds_json_string = st.secrets["gcp_service_account"]  # Accede directamente a la clave "credentials"
+    creds_json = json.loads(creds_json_string) #Transforma la cadena a diccionario.
+
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
     client = gspread.authorize(creds)
     sheet = client.open('BBDD_RESPUESTAS').sheet1
