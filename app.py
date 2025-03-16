@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import json
 from dotenv import load_dotenv
-import re
 
 load_dotenv()
 
@@ -32,7 +31,7 @@ noticias = [
     "Granada retrasa seis meses el inicio de la Zona de Bajas Emisiones, previsto hasta ahora para abril",
     "McDonald's donará a la Fundación Ronald McDonald todas las ganancias por ventas del Big Mac del 6 de diciembre",
     "El Gobierno autoriza a altos cargos públicos a irse a Indra, Escribano, CEOE, Barceló, Iberdrola o Airbus",
-    "Las aportaciones a los planes de pensiones caen 10.000 millones en los últimos cuatro años ",
+    "Las aportaciones a los planes de pensiones caen 10.000 millones en los últimos cuatro años",
 ]
 
 plantilla_reaccion = """
@@ -70,6 +69,7 @@ if st.session_state.contador < len(noticias):
         st.session_state.contador += 1
         st.rerun()
 else:
+    # Análisis de todas las reacciones
     analisis_total = ""
     for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
         analisis_reaccion = cadena_reaccion.run(reaccion=reaccion)
@@ -80,11 +80,13 @@ else:
     print(f"Respuesta del modelo:{perfil}")  # Imprime la respuesta
     
     # Extraer puntuaciones del perfil con expresiones regulares
-    puntuaciones = {}
-    puntuaciones["Ambiental"] = int(re.search(r"Ambiental: (\d+)", perfil).group(1))
-    puntuaciones["Social"] = int(re.search(r"Social: (\d+)", perfil).group(1))
-    puntuaciones["Gobernanza"] = int(re.search(r"Gobernanza: (\d+)", perfil).group(1))
-    puntuaciones["Riesgo"] = int(re.search(r"Riesgo: (\d+)", perfil).group(1))
+    puntuaciones = {
+        "Ambiental": int(re.search(r"Ambiental: (\d+)", perfil).group(1)),
+        "Social": int(re.search(r"Social: (\d+)", perfil).group(1)),
+        "Gobernanza": int(re.search(r"Gobernanza: (\d+)", perfil).group(1)),
+        "Riesgo": int(re.search(r"Riesgo: (\d+)", perfil).group(1)),
+    }
+
     # Crear gráfico de barras
     categorias = list(puntuaciones.keys())
     valores = list(puntuaciones.values())
@@ -93,16 +95,12 @@ else:
     ax.bar(categorias, valores)
     ax.set_ylabel("Puntuación (0-100)")
     ax.set_title("Perfil del Inversor")
-
-    # Mostrar gráfico en Streamlit
     st.pyplot(fig)
 
     try:
-        # Cargar el secreto como JSON
+        # Cargar credenciales de Google Sheets
         creds_json_str = st.secrets["gcp_service_account"]
-        creds_json = json.loads(creds_json_str)  # Convertir a dict
-        print("Tipo de creds_json:", type(creds_json))  # Debe imprimir <class 'dict'>
-
+        creds_json = json.loads(creds_json_str)
     except Exception as e:
         st.error(f"Error al cargar las credenciales: {e}")
         st.stop()
@@ -112,7 +110,16 @@ else:
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
     client = gspread.authorize(creds)
     
-    # Continúa con el resto del código
+    # Abrir la hoja de cálculo
     sheet = client.open('BBDD_RESPUESTAS').sheet1
+
+    # Guardar todas las respuestas en Google Sheets
+    for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
+        fila = [titular, reaccion]
+        sheet.append_row(fila)
+
+    # Guardar puntuaciones ESG
     df = pd.DataFrame([puntuaciones])
     sheet.append_rows(df.values.tolist())
+
+    st.success("Respuestas y perfil guardados en Google Sheets.")
