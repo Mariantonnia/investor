@@ -98,15 +98,26 @@ else:
     # Mostrar gráfico en Streamlit
     st.pyplot(fig)
 
-    # Guardar datos en excel de google drive.
+    # Configura el scope para Google Sheets
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-    # Recupera las credenciales del secreto de Streamlit
-    creds_json_string = st.secrets["gcp_service_account"]  # Accede directamente a la clave "credentials"
-    print(st.secrets["gcp_service_account"])
-    creds_json = json.loads(creds_json_string) #Transforma la cadena a diccionario.
-
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
-    client = gspread.authorize(creds)
+    
+    # Carga las credenciales desde st.secrets
+    try:
+        creds_json = st.secrets["gcp_service_account"]
+        print("Credenciales cargadas correctamente:", creds_json)  # Depuración
+    except Exception as e:
+        st.error(f"Error al cargar las credenciales: {e}")
+        st.stop()
+    
+    # Autoriza el cliente de Google Sheets
+    try:
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
+        client = gspread.authorize(creds)
+    except Exception as e:
+        st.error(f"Error al autorizar el cliente: {e}")
+        st.stop()
+    
+    # Continúa con el resto del código
     sheet = client.open('BBDD_RESPUESTAS').sheet1
     df = pd.DataFrame([puntuaciones])
     sheet.append_rows(df.values.tolist())
