@@ -103,7 +103,7 @@ else:
     # Carga las credenciales desde st.secrets
     try:
         creds_json = st.secrets["gcp_service_account"]
-        print("Credenciales cargadas correctamente:", creds_json)  # Depuración
+        print(type(creds_json))  # Depuración
     except Exception as e:
         st.error(f"Error al cargar las credenciales: {e}")
         st.stop()
