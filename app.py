@@ -78,16 +78,12 @@ else:
     perfil = cadena_perfil.run(analisis=analisis_total)
     st.write(f"**Perfil del inversor:** {perfil}")
     
-    # Expresiones regulares con manejo de errores
-    def extraer_puntuacion(texto, categoria):
-        match = re.search(fr"{categoria}: (\d+)", texto)
-        return int(match.group(1)) if match else 0  # Si no se encuentra, devuelve 0
-    
+    # Extraer puntuaciones del perfil con expresiones regulares
     puntuaciones = {
-        "Ambiental": extraer_puntuacion(perfil, "Ambiental"),
-        "Social": extraer_puntuacion(perfil, "Social"),
-        "Gobernanza": extraer_puntuacion(perfil, "Gobernanza"),
-        "Riesgo": extraer_puntuacion(perfil, "Riesgo"),
+        "Ambiental": int(re.search(r"Ambiental: (\d+)", perfil).group(1)),
+        "Social": int(re.search(r"Social: (\d+)", perfil).group(1)),
+        "Gobernanza": int(re.search(r"Gobernanza: (\d+)", perfil).group(1)),
+        "Riesgo": int(re.search(r"Riesgo: (\d+)", perfil).group(1)),
     }
 
     # Crear gráfico de barras
