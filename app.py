@@ -102,6 +102,7 @@ else:
     scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     # Recupera las credenciales del secreto de Streamlit
     creds_json_string = st.secrets["gcp_service_account"]  # Accede directamente a la clave "credentials"
+    print(st.secrets["gcp_service_account"])
     creds_json = json.loads(creds_json_string) #Transforma la cadena a diccionario.
 
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_json, scope)
