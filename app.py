@@ -112,11 +112,9 @@ else:
     # Abrir la hoja de cálculo
     sheet = client.open('BBDD_RESPUESTAS').sheet1
 
-    # Construir una sola fila con toda la información
-    fila = []
-    for titular, reaccion in zip(st.session_state.titulares, st.session_state.reacciones):
-        fila.append(titular)
-        fila.append(reaccion)
+    
+    # Construir una sola fila con todas las respuestas
+    fila = st.session_state.reacciones[:]  # Solo guardar las reacciones
     
     # Agregar las puntuaciones al final
     fila.extend([
@@ -125,7 +123,7 @@ else:
         puntuaciones["Gobernanza"],
         puntuaciones["Riesgo"]
     ])
-
+    
     # Agregar la fila a Google Sheets
     sheet.append_row(fila)
 
